@@ -1,0 +1,16 @@
+{
+  "name": "simple-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm -rf build/ && parcel build index.js -d build/",
+    "start": "rm -rf .cache && rm -rf dist && parcel serve index.html"
+  },
+  "devDependencies": {},
+  "author": "nutella",
+  "license": "MIT",
+  "dependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}

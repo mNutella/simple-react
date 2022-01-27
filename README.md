@@ -1,7 +1,7 @@
 # Simple React
 ## To Do
-- [ ] The *createElement* function
-- [ ] The *render* function
+- [x] The *createElement* function
+- [x] The *render* function
 - [ ] Concurrent Mode
 - [ ] Fibers
 - [ ] Render and Commit Phases

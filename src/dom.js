@@ -1,12 +1,20 @@
-export const render = (element, container) => {
-  const { props, type } = element;
+
+export const createDom = fiber => {
+  const { type, props } = fiber;
   const dom = creatNode(type);
 
   mapPropsToAttributes(props, dom);
 
-  props.children.forEach(child => render(child, dom));
+  return dom;
+}
 
-  container.appendChild(dom);
+export const render = (element, container) => {
+  nextUnitOfWork = {
+    dom: container,
+    props: {
+      children: [element]
+    }
+  };
 }
 
 const creatNode = (type) => {

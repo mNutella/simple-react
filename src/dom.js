@@ -1,5 +1,6 @@
+import { setNextUnitOfWork } from "./state";
 
-export const createDom = fiber => {
+export const createDomNode = fiber => {
   const { type, props } = fiber;
   const dom = creatNode(type);
 
@@ -9,12 +10,14 @@ export const createDom = fiber => {
 }
 
 export const render = (element, container) => {
-  nextUnitOfWork = {
+  const newNextUnitOfWork = {
     dom: container,
     props: {
       children: [element]
     }
   };
+
+  setNextUnitOfWork(newNextUnitOfWork);
 }
 
 const creatNode = (type) => {

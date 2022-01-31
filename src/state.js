@@ -1,6 +1,7 @@
 let nextUnitOfWork = null;
 let wipRoot = null;
 let currentRoot = null;
+let deletions = [];
 
 export const setNextUnitOfWork = (newUnitOfWork) => {
   nextUnitOfWork = newUnitOfWork;
@@ -24,4 +25,12 @@ export const setCurrentRoot = (newCurrentRoot) => {
 
 export const getCurrentRoot = () => {
   return currentRoot;
+}
+
+export const addDeletions = (newDeletions) => {
+  deletions.push(newDeletions);
+}
+
+export const getDeletions = () => {
+  return deletions;
 }

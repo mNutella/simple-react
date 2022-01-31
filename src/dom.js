@@ -1,4 +1,4 @@
-import { setNextUnitOfWork } from "./state";
+import { setWIPRoot, setNextUnitOfWork, getCurrentRoot } from "./state";
 
 export const createDomNode = fiber => {
   const { type, props } = fiber;
@@ -10,14 +10,16 @@ export const createDomNode = fiber => {
 }
 
 export const render = (element, container) => {
-  const newNextUnitOfWork = {
+  const newWipRoot = {
     dom: container,
     props: {
       children: [element]
-    }
+    },
+    alternate: getCurrentRoot()
   };
 
-  setNextUnitOfWork(newNextUnitOfWork);
+  setWIPRoot(newWipRoot);
+  setNextUnitOfWork(newWipRoot);
 }
 
 const creatNode = (type) => {

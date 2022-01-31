@@ -1,6 +1,30 @@
 import { createDomNode } from "./dom";
 import { createFibers } from "./virtualDom";
-import { getNextUnitOfWork, setNextUnitOfWork } from "./state";
+import { 
+  getNextUnitOfWork, 
+  getWIPRoot, 
+  setCurrentRoot, 
+  setNextUnitOfWork, 
+  setWIPRoot 
+} from "./state";
+
+function commitRoot() {
+  const wipRoot = getWIPRoot();
+
+  commitWork(wipRoot.child);
+
+  setCurrentRoot(wipRoot);
+  setWIPRoot(null);
+}
+
+function commitWork(fiber) {
+  if (!fiber) return;
+
+  const domParent = fiber.parent.dom;
+  domParent.appendChild(fiber.dom);
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+}
 
 export const workLoop = (deadLine) => {
   const nextUnitOfWork = getNextUnitOfWork();
@@ -8,6 +32,10 @@ export const workLoop = (deadLine) => {
   while (nextUnitOfWork && !shouldYeld) {
     setNextUnitOfWork(performUnitOfWork(nextUnitOfWork));
     shouldYeld = deadLine.timeRemaining() < 1;
+  }
+
+  if (!nextUnitOfWork && wipRoot) {
+    commitRoot();
   }
 
   requestIdleCallback(workLoop);

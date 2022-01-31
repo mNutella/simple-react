@@ -1,5 +1,6 @@
 let nextUnitOfWork = null;
 let wipRoot = null;
+let currentRoot = null;
 
 export const setNextUnitOfWork = (newUnitOfWork) => {
   nextUnitOfWork = newUnitOfWork;
@@ -15,4 +16,12 @@ export const setWIPRoot = (newWIPRoot) => {
 
 export const getWIPRoot = () => {
   return wipRoot;
+}
+
+export const setCurrentRoot = (newCurrentRoot) => {
+  currentRoot = newCurrentRoot;
+}
+
+export const getCurrentRoot = () => {
+  return currentRoot;
 }

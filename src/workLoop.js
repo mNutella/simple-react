@@ -1,5 +1,5 @@
-import { createDomNode, updateDom } from "./dom";
-import { reconcileChildren } from "./reconciler";
+import { updateDom } from "./dom";
+import { updateFunctionComponent, updateHostComponent } from "./component";
 import { 
   getDeletions,
   getNextUnitOfWork, 
@@ -14,7 +14,7 @@ import {
   UPDATE_COMMIT_TYPE 
 } from "./constants";
 
-function commitRoot() {
+const commitRoot = () => {
   const wipRoot = getWIPRoot();
   const deletions = getDeletions();
 
@@ -25,10 +25,14 @@ function commitRoot() {
   setWIPRoot(null);
 }
 
-function commitWork(fiber) {
+const commitWork = (fiber) => {
   if (!fiber) return;
 
-  const domParent = fiber.parent.dom;
+  let domParentFiber = fiber.parent;
+  while (!domParentFiber.dom) {
+    domParentFiber = domParentFiber.parent;
+  }
+  const domParent = domParentFiber.dom;
 
   if (
     fiber.effectTag === PLACEMENT_COMMIT_TYPE &&
@@ -42,11 +46,19 @@ function commitWork(fiber) {
       fiber.alternate.props, 
       fiber.props);
   } else if (fiber.effectTag === DELETION_COMMIT_TYPE) {
-    domParent.removeChild(fiber.dom);
+    commitDeletion(fiber, domParent);
   }
 
   commitWork(fiber.child);
   commitWork(fiber.sibling);
+}
+
+const commitDeletion = (fiber, domParent) => {
+  if (fiber.dom) {
+    domParent.removeChild(fiber.dom);
+  } else {
+    commitDeletion(fiber.child, domParent);
+  }
 }
 
 export const workLoop = (deadLine) => {
@@ -66,13 +78,12 @@ export const workLoop = (deadLine) => {
 }
 
 const performUnitOfWork = (fiber) => {
-  // add dom node
-  if (!fiber.dom) {
-    fiber.dom = createDomNode(fiber);
+  const isFunctionComponent = fiber.type instanceof Function;
+  if (isFunctionComponent) {
+    updateFunctionComponent(fiber);
+  } else {
+    updateHostComponent(fiber);
   }
-
-  // create new fibers
-  reconcileChildren(fiber, fiber.props.children);
 
   // return next unit of work
   if (fiber.child) {

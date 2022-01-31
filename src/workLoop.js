@@ -1,16 +1,24 @@
-import { createDomNode } from "./dom";
-import { createFibers } from "./virtualDom";
+import { createDomNode, updateDom } from "./dom";
+import { reconcileChildren } from "./reconciler";
 import { 
+  getDeletions,
   getNextUnitOfWork, 
   getWIPRoot, 
   setCurrentRoot, 
   setNextUnitOfWork, 
   setWIPRoot 
 } from "./state";
+import { 
+  DELETION_COMMIT_TYPE, 
+  PLACEMENT_COMMIT_TYPE, 
+  UPDATE_COMMIT_TYPE 
+} from "./constants";
 
 function commitRoot() {
   const wipRoot = getWIPRoot();
+  const deletions = getDeletions();
 
+  deletions.forEach(commitWork);
   commitWork(wipRoot.child);
 
   setCurrentRoot(wipRoot);
@@ -21,13 +29,29 @@ function commitWork(fiber) {
   if (!fiber) return;
 
   const domParent = fiber.parent.dom;
-  domParent.appendChild(fiber.dom);
+
+  if (
+    fiber.effectTag === PLACEMENT_COMMIT_TYPE &&
+    fiber.dom) {
+    domParent.appendChild(fiber.dom);
+  } else if (
+    fiber.effectTag === UPDATE_COMMIT_TYPE &&
+    fiber.dom) {
+    updateDom(
+      fiber.dom, 
+      fiber.alternate.props, 
+      fiber.props);
+  } else if (fiber.effectTag === DELETION_COMMIT_TYPE) {
+    domParent.removeChild(fiber.dom);
+  }
+
   commitWork(fiber.child);
   commitWork(fiber.sibling);
 }
 
 export const workLoop = (deadLine) => {
   const nextUnitOfWork = getNextUnitOfWork();
+  const wipRoot = getWIPRoot();
   let shouldYeld = false;
   while (nextUnitOfWork && !shouldYeld) {
     setNextUnitOfWork(performUnitOfWork(nextUnitOfWork));
@@ -41,8 +65,6 @@ export const workLoop = (deadLine) => {
   requestIdleCallback(workLoop);
 }
 
-requestIdleCallback(workLoop);
-
 const performUnitOfWork = (fiber) => {
   // add dom node
   if (!fiber.dom) {
@@ -50,7 +72,7 @@ const performUnitOfWork = (fiber) => {
   }
 
   // create new fibers
-  createFibers(fiber.props.children, fiber);
+  reconcileChildren(fiber, fiber.props.children);
 
   // return next unit of work
   if (fiber.child) {

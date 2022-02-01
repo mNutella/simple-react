@@ -1,7 +1,9 @@
 let nextUnitOfWork = null;
 let wipRoot = null;
+let wipFiber = { hooks: [] };
 let currentRoot = null;
 let deletions = [];
+let hookIndex = 0;
 
 export const setNextUnitOfWork = (newUnitOfWork) => {
   nextUnitOfWork = newUnitOfWork;
@@ -19,6 +21,22 @@ export const getWIPRoot = () => {
   return wipRoot;
 }
 
+export const addWIPFiberHook = (newHook) => {
+  wipFiber.hooks.push(newHook);
+}
+
+export const setWIPFiber = (newWIPFiber) => {
+  wipFiber = newWIPFiber;
+}
+
+export const getWIPFiber = () => {
+  return wipFiber;
+}
+
+export const resetWIPFiberHooks = () => {
+  wipFiber.hooks = [];
+}
+
 export const setCurrentRoot = (newCurrentRoot) => {
   currentRoot = newCurrentRoot;
 }
@@ -33,4 +51,20 @@ export const addDeletions = (newDeletions) => {
 
 export const getDeletions = () => {
   return deletions;
+}
+
+export const resetDeletions = () => {
+  deletions = [];
+}
+
+export const incrementHookIndex = () => {
+  hookIndex++;
+}
+
+export const setHookIndex = (value) => {
+  hookIndex = value;
+}
+
+export const getHookIndex = () => {
+  return hookIndex;
 }

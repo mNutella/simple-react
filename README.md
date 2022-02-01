@@ -8,3 +8,5 @@
 - [ ] Reconciliation
 - [ ] Function Components
 - [ ] Hooks
+  - [x] useState
+  - [ ] useEffect

@@ -1,3 +1,4 @@
+import { ELEMENT_TYPE_TEXT } from "./constants";
 import { setWIPRoot, setNextUnitOfWork, getCurrentRoot } from "./state";
 
 const isEvent = key => key.startsWith("on");
@@ -6,7 +7,7 @@ const isNew = (prev, next) => key => prev[key] !== next[key];
 const isGone = (next) => key => !(key in next);
 
 const creatNode = (type) => {
-  return type === "TEXT_ELEMENT" 
+  return type === ELEMENT_TYPE_TEXT 
     ? document.createTextNode("")
     : document.createElement(type);
 }

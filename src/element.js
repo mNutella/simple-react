@@ -1,3 +1,5 @@
+import { ELEMENT_TYPE_TEXT } from "./constants";
+
 export const createElement = (type, props, ...children) => {
   return {
     type,
@@ -14,7 +16,7 @@ export const createElement = (type, props, ...children) => {
 
 const createTextElement = (text) => {
   return {
-    type: "TEXT_ELEMENT",
+    type: ELEMENT_TYPE_TEXT,
     props: {
       nodeValue: text,
       children: []

@@ -2,11 +2,11 @@
 ## To Do
 - [x] The *createElement* function
 - [x] The *render* function
-- [ ] Concurrent Mode
-- [ ] Fibers
-- [ ] Render and Commit Phases
-- [ ] Reconciliation
-- [ ] Function Components
+- [x] Concurrent Mode
+- [x] Fibers
+- [x] Render and Commit Phases
+- [x] Reconciliation
+- [x] Function Components
 - [ ] Hooks
   - [x] useState
   - [ ] useEffect
